@@ -32,13 +32,13 @@ defmodule Hangman.Game do
           | :lost
           | :won
   @typedoc "A game struct for the Hangman Game"
-  @opaque t :: %Game{
-            game_name: name,
-            turns_left: turns_left,
-            game_state: state,
-            letters: [letter],
-            used: used
-          }
+  @type t :: %Game{
+          game_name: name,
+          turns_left: turns_left,
+          game_state: state,
+          letters: [letter],
+          used: used
+        }
   @typedoc "A tally struct for the Hangman Game"
   @type tally :: %{
           game_state: state,
