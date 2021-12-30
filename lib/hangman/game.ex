@@ -39,7 +39,7 @@ defmodule Hangman.Game do
           letters: [letter],
           used: used
         }
-  @typedoc "A tally struct for the Hangman Game"
+  @typedoc "A tally map for the Hangman Game"
   @type tally :: %{
           game_state: state,
           turns_left: turns_left,
@@ -104,15 +104,16 @@ defmodule Hangman.Game do
     do: make_move(game, guess, MapSet.member?(used, guess))
 
   @doc """
-  Returns a tally struct externalizing `game`.
+  Returns a tally map externalizing `game`.
 
   ## Examples
 
       iex> alias Hangman.Game
-      iex> game = Game.random_name() |> Game.new()
+      iex> game = Game.random_name() |> Game.new("anaconda")
       iex> game = Game.make_move(game, "a")
-      iex> Game.tally(game).turns_left in 6..7
-      true
+      iex> tally = Game.tally(game)
+      iex> {tally.game_state, tally.turns_left, tally.letters, tally.guesses}
+      {:good_guess, 7, ["a", "_", "a", "_", "_", "_", "_", "a"], ["a"]}
   """
   @spec tally(t) :: tally
   def tally(%Game{game_state: game_state, turns_left: turns_left} = game) do
