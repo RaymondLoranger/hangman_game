@@ -19,7 +19,7 @@ defmodule Hangman.Game do
             letters: [],
             used: MapSet.new()
 
-  @typedoc "Letter between a and z"
+  @typedoc "Letter between a and z or _"
   @type letter :: String.codepoint()
   @typedoc "Game name"
   @type name :: String.t()
