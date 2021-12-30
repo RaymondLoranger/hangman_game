@@ -4,10 +4,33 @@ defmodule Hangman.Game.MixProject do
   def project do
     [
       app: :hangman_game,
-      version: "0.1.1",
+      version: "0.1.2",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
+      name: "Hangman Game",
+      source_url: source_url(),
+      description: description(),
+      package: package(),
       deps: deps()
+    ]
+  end
+
+  defp source_url do
+    "https://github.com/RaymondLoranger/hangman_game"
+  end
+
+  defp description do
+    """
+    A game struct and functions for the Hangman Game.
+    """
+  end
+
+  defp package do
+    [
+      files: ["lib", "mix.exs", "README*"],
+      maintainers: ["Raymond Loranger"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => source_url()}
     ]
   end
 
@@ -23,7 +46,7 @@ defmodule Hangman.Game.MixProject do
     [
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:ex_doc, "~> 0.22", only: :dev, runtime: false},
-      {:hangman_dictionary, github: "RaymondLoranger/hangman_dictionary"}
+      {:hangman_dictionary, "~> 0.1"}
     ]
   end
 end

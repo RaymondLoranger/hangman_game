@@ -7,8 +7,8 @@ defmodule Hangman.GameTest do
 
   setup_all do
     games = %{
-      random: Game.new("Rand"),
-      wibble: Game.new("Will", "wibble")
+      random: Game.new("Random word"),
+      wibble: Game.new("Stated word", "wibble")
     }
 
     moves = %{
@@ -61,7 +61,7 @@ defmodule Hangman.GameTest do
   end
 
   describe "Game.make_move/2" do
-    test "game static once :won or :lost", %{games: games} do
+    test "game static once won or lost", %{games: games} do
       for state <- [:won, :lost] do
         game = %Game{games.random | game_state: state}
         assert ^game = Game.make_move(game, "x")
