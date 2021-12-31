@@ -19,7 +19,7 @@ defmodule Hangman.Game do
             letters: [],
             used: MapSet.new()
 
-  @typedoc "Letter from `a` to `z` or `_` (underscore)"
+  @typedoc "Letter from `a` to `z`"
   @type letter :: String.codepoint()
   @typedoc "Game name"
   @type name :: String.t()
@@ -43,11 +43,13 @@ defmodule Hangman.Game do
   @type tally :: %{
           game_state: state,
           turns_left: turns_left,
-          letters: [letter | charlist],
+          letters: [letter | underline | charlist],
           guesses: [letter]
         }
   @typedoc "Turns left from 7 to 0"
   @type turns_left :: 0..7
+  @typedoc "Underline: `_`"
+  @type underline :: String.codepoint()
   @typedoc "A set of used (guessed) letters"
   @type used :: MapSet.t(letter)
 
@@ -142,7 +144,7 @@ defmodule Hangman.Game do
 
   ## Private functions
 
-  @spec reveal_guessed(state, [letter], used) :: [letter | charlist]
+  @spec reveal_guessed(state, [letter], used) :: [letter | underline | charlist]
   defp reveal_guessed(:lost = _game_state, letters, used),
     do: letters |> Enum.map(&if MapSet.member?(used, &1), do: &1, else: '#{&1}')
 
