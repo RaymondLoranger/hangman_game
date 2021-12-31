@@ -46,7 +46,9 @@ defmodule Hangman.Game do
           letters: [letter | charlist],
           guesses: [letter]
         }
+  @typedoc "Turns left from 7 to 0"
   @type turns_left :: 0..7
+  @typedoc "A set of used (guessed) letters"
   @type used :: MapSet.t(letter)
 
   @doc """

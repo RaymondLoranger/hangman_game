@@ -4,7 +4,7 @@ defmodule Hangman.Game.MixProject do
   def project do
     [
       app: :hangman_game,
-      version: "0.1.7",
+      version: "0.1.8",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       name: "Hangman Game",
