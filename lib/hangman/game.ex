@@ -150,16 +150,16 @@ defmodule Hangman.Game do
     do: letters |> Enum.map(&if MapSet.member?(used, &1), do: &1, else: "_")
 
   @spec make_move(t, letter, boolean) :: t
-  defp make_move(game, _guess, _already_used = true),
+  defp make_move(game, _guess, _already_used? = true),
     do: put_in(game.game_state, :already_used)
 
-  defp make_move(game, guess, _never_used) do
+  defp make_move(game, guess, _already_used?) do
     update_in(game.used, &MapSet.put(&1, guess))
     |> score_guess(guess in game.letters)
   end
 
   @spec score_guess(t, boolean) :: t
-  defp score_guess(game, _good_guess = true) do
+  defp score_guess(game, _good_guess? = true) do
     state =
       if MapSet.new(game.letters) |> MapSet.subset?(game.used),
         do: :won,
@@ -168,11 +168,11 @@ defmodule Hangman.Game do
     put_in(game.game_state, state)
   end
 
-  defp score_guess(%Game{turns_left: 1} = game, _bad_guess),
+  defp score_guess(%Game{turns_left: 1} = game, _good_guess?),
     do: %Game{game | game_state: :lost, turns_left: 0}
 
-  defp score_guess(%Game{turns_left: 0} = game, _bad_guess), do: game
+  defp score_guess(%Game{turns_left: 0} = game, _good_guess?), do: game
 
-  defp score_guess(%Game{turns_left: turns_left} = game, _bad_guess),
+  defp score_guess(%Game{turns_left: turns_left} = game, _good_guess?),
     do: %Game{game | game_state: :bad_guess, turns_left: turns_left - 1}
 end
