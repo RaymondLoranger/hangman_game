@@ -7,6 +7,7 @@ defmodule Hangman.GameTest do
 
   setup_all do
     games = %{
+      ad_lib: Game.new(),
       random: Game.new("Random word"),
       wibble: Game.new("Stated word", "wibble")
     }
@@ -39,6 +40,16 @@ defmodule Hangman.GameTest do
     }
 
     %{games: games, moves: moves}
+  end
+
+  describe "Game.new/0" do
+    test "returns a struct", %{games: games} do
+      assert games.ad_lib.turns_left == 7
+      assert games.ad_lib.game_state == :initializing
+      assert length(games.ad_lib.letters) > 0
+      assert Enum.all?(games.ad_lib.letters, &(&1 =~ ~r/[a-z]/))
+      assert is_struct(games.ad_lib, Game)
+    end
   end
 
   describe "Game.new/1" do

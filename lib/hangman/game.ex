@@ -50,16 +50,29 @@ defmodule Hangman.Game do
   @type used :: MapSet.t(letter)
 
   @doc """
-  Returns a game struct given a `game_name` and a `word` to be guessed.
+  Creates a game struct from a `game_name` and a `word` to be guessed. The default value for `game_name` is provided by function `random_name/0` and for
+  `word` by function `Hangman.Dictionary.random_word/0`.
 
   ## Examples
 
       iex> alias Hangman.Game
-      iex> Game.new("Mr Smith").game_state
-      :initializing
+      iex> game = Game.new()
+      iex> game_name_length = String.length(game.game_name)
+      iex> {game.game_state, game.turns_left, game_name_length in 4..10}
+      {:initializing, 7, true}
+
+      iex> alias Hangman.Game
+      iex> game = Game.new("Mr Smith")
+      iex> {game.game_state, game.turns_left, game.game_name}
+      {:initializing, 7, "Mr Smith"}
+
+      iex> alias Hangman.Game
+      iex> game = Game.new("Wibble", "wibble")
+      iex> {game.game_state, game.turns_left, game.game_name, game.letters}
+      {:initializing, 7, "Wibble", ~w[w i b b l e]}
   """
   @spec new(name, String.t()) :: t
-  def new(game_name, word \\ Dictionary.random_word()) do
+  def new(game_name \\ random_name(), word \\ Dictionary.random_word()) do
     %Game{game_name: game_name, letters: String.codepoints(word)}
   end
 
@@ -113,7 +126,7 @@ defmodule Hangman.Game do
       iex> game = Game.make_move(game, "a")
       iex> tally = Game.tally(game)
       iex> {tally.game_state, tally.turns_left, tally.letters, tally.guesses}
-      {:good_guess, 7, ["a", "_", "a", "_", "_", "_", "_", "a"], ["a"]}
+      {:good_guess, 7, ~w[a _ a _ _ _ _ a], ~w[a]}
   """
   @spec tally(t) :: tally
   def tally(%Game{game_state: game_state, turns_left: turns_left} = game) do
