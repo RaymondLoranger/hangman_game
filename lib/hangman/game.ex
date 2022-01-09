@@ -173,8 +173,6 @@ defmodule Hangman.Game do
   defp score_guess(%Game{turns_left: 1} = game, _good_guess?),
     do: %Game{game | game_state: :lost, turns_left: 0}
 
-  defp score_guess(%Game{turns_left: 0} = game, _good_guess?), do: game
-
   defp score_guess(%Game{turns_left: turns_left} = game, _good_guess?),
     do: %Game{game | game_state: :bad_guess, turns_left: turns_left - 1}
 end
