@@ -54,7 +54,8 @@ defmodule Hangman.Game do
   @type used :: MapSet.t(letter)
 
   @doc """
-  Creates a game struct from a `game_name` and a `word` to be guessed. The default value for `game_name` is provided by function `random_name/0` and for
+  Creates a game struct from a `game_name` and a `word` to be guessed. The
+  default value for `game_name` is provided by function `random_name/0` and for
   `word` by function `Hangman.Dictionary.random_word/0`.
 
   ## Examples
