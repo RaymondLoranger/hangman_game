@@ -9,31 +9,36 @@ defmodule Hangman.GameTest do
     games = %{
       ad_lib: Game.new(),
       random: Game.new("Random word"),
-      wibble: Game.new("Stated word", "wibble")
+      wibble: Game.new("Direct word", "wibble")
     }
 
     moves = %{
       winning: [
-        {"w", :good_guess, 7},
-        {"i", :good_guess, 7},
-        {"b", :good_guess, 7},
-        {"l", :good_guess, 7},
-        {"e", :won, 7}
+        # guess, state, left, revealed letters, used
+        {"w", :good_guess, 7, ~w(w _ _ _ _ _)s, ~w(w)},
+        {"i", :good_guess, 7, ~w(w i _ _ _ _)s, ~w(w i)},
+        {"b", :good_guess, 7, ~w(w i b b _ _)s, ~w(w i b)},
+        {"l", :good_guess, 7, ~w(w i b b l _)s, ~w(w i b l)},
+        {"z", :bad_guess, 06, ~w(w i b b l _)s, ~w(w i b l z)},
+        {"e", :won, 0x000006, ~w(w i b b l e)s, ~w(w i b l e z)}
       ],
       losing: [
-        {"m", :bad_guess, 6},
-        {"n", :bad_guess, 5},
-        {"o", :bad_guess, 4},
-        {"p", :bad_guess, 3},
-        {"q", :bad_guess, 2},
-        {"r", :bad_guess, 1},
-        {"s", :lost, 0}
+        # guess, state, left, revealed letters, used
+        {"m", :bad_guess, 6, ~w(_ _ _ _ _ _)s, ~w(m)},
+        {"n", :bad_guess, 5, ~w(_ _ _ _ _ _)s, ~w(m n)},
+        {"o", :bad_guess, 4, ~w(_ _ _ _ _ _)s, ~w(m n o)},
+        {"p", :bad_guess, 3, ~w(_ _ _ _ _ _)s, ~w(m n o p)},
+        {"q", :bad_guess, 2, ~w(_ _ _ _ _ _)s, ~w(m n o p q)},
+        {"r", :bad_guess, 1, ~w(_ _ _ _ _ _)s, ~w(m n o p q r)},
+        {"s", :lost, 0x0000, ~w(w i b b l e)c, ~w(m n o p q r s)}
       ],
       tester: fn moves, game ->
-        Enum.reduce(moves, game, fn {guess, state, turns_left}, game ->
+        Enum.reduce(moves, game, fn {guess, state, left, letters, used}, game ->
           game = Game.make_move(game, guess)
           assert game.game_state == state
-          assert game.turns_left == turns_left
+          assert game.turns_left == left
+          assert game.used == MapSet.new(used)
+          assert Game.tally(game).letters == letters
           game
         end)
       end

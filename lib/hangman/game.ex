@@ -138,18 +138,19 @@ defmodule Hangman.Game do
     %{
       game_state: game_state,
       turns_left: turns_left,
-      letters: reveal_guessed(game_state, game.letters, game.used),
+      letters: reveal_guessed_letters(game_state, game.letters, game.used),
       guesses: MapSet.to_list(game.used)
     }
   end
 
   ## Private functions
 
-  @spec reveal_guessed(state, [letter], used) :: [letter | underline | charlist]
-  defp reveal_guessed(:lost = _game_state, letters, used),
+  @spec reveal_guessed_letters(state, [letter], used) ::
+          [letter | underline | charlist]
+  defp reveal_guessed_letters(:lost = _game_state, letters, used),
     do: letters |> Enum.map(&if MapSet.member?(used, &1), do: &1, else: '#{&1}')
 
-  defp reveal_guessed(_game_state, letters, used),
+  defp reveal_guessed_letters(_game_state, letters, used),
     do: letters |> Enum.map(&if MapSet.member?(used, &1), do: &1, else: "_")
 
   @spec make_move(t, letter, boolean) :: t
