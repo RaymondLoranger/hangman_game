@@ -2,7 +2,7 @@ defmodule Hangman.Game do
   @moduledoc """
   A game struct and functions for the _Hangman Game_.
 
-  The game struct contains the fields `game_name`, `turns_left`, `game_state`,
+  The game struct contains the fields `game_name`, `game_state`, `turns_left`,
   `letters` and `used` representing the characteristics of a game in the
   _Hangman Game_.
 
@@ -10,12 +10,11 @@ defmodule Hangman.Game do
   """
 
   alias __MODULE__
-  alias Hangman.Dictionary
 
   @enforce_keys [:game_name, :letters]
   defstruct game_name: "",
-            turns_left: 7,
             game_state: :initializing,
+            turns_left: 7,
             letters: [],
             used: MapSet.new()
 
@@ -34,8 +33,8 @@ defmodule Hangman.Game do
   @typedoc "A game struct for the Hangman Game"
   @type t :: %Game{
           game_name: name,
-          turns_left: turns_left,
           game_state: state,
+          turns_left: turns_left,
           letters: [letter],
           used: used
         }
@@ -74,12 +73,11 @@ defmodule Hangman.Game do
       iex> alias Hangman.Game
       iex> game = Game.new("Wibble", "wibble")
       iex> {game.game_state, game.turns_left, game.game_name, game.letters}
-      {:initializing, 7, "Wibble", ~w[w i b b l e]}
+      {:initializing, 7, "Wibble", ~W[w i b b l e]}
   """
   @spec new(name, String.t()) :: t
-  def new(game_name \\ random_name(), word \\ Dictionary.random_word()) do
-    %Game{game_name: game_name, letters: String.codepoints(word)}
-  end
+  def new(game_name \\ random_name(), word \\ Hangman.Dictionary.random_word()),
+    do: %Game{game_name: game_name, letters: String.codepoints(word)}
 
   @doc """
   Returns a random name of 4 to 10 characters.
@@ -98,7 +96,7 @@ defmodule Hangman.Game do
     length = Enum.random(4..10)
 
     :crypto.strong_rand_bytes(length)
-    |> Base.url_encode64()
+    |> Base.url_encode64(padding: false)
     # Starting at 0 with length "length"...
     |> binary_part(0, length)
   end
@@ -109,7 +107,7 @@ defmodule Hangman.Game do
   ## Examples
 
       iex> alias Hangman.Game
-      iex> game = Game.random_name() |> Game.new()
+      iex> game = Game.new()
       iex> Game.make_move(game, "a").game_state in [:good_guess, :bad_guess]
       true
   """
@@ -131,7 +129,7 @@ defmodule Hangman.Game do
       iex> game = Game.make_move(game, "a")
       iex> tally = Game.tally(game)
       iex> {tally.game_state, tally.turns_left, tally.letters, tally.guesses}
-      {:good_guess, 7, ~w[a _ a _ _ _ _ a], ~w[a]}
+      {:good_guess, 7, ~W[a _ a _ _ _ _ a], ~W[a]}
   """
   @spec tally(t) :: tally
   def tally(%Game{game_state: game_state, turns_left: turns_left} = game) do
@@ -164,12 +162,10 @@ defmodule Hangman.Game do
 
   @spec score_guess(t, boolean) :: t
   defp score_guess(game, _good_guess? = true) do
-    state =
-      if MapSet.new(game.letters) |> MapSet.subset?(game.used),
-        do: :won,
-        else: :good_guess
-
-    put_in(game.game_state, state)
+    MapSet.new(game.letters)
+    |> MapSet.subset?(game.used)
+    |> if(do: :won, else: :good_guess)
+    |> then(&put_in(game.game_state, &1))
   end
 
   defp score_guess(%Game{turns_left: 1} = game, _good_guess?),

@@ -9,28 +9,32 @@ defmodule Hangman.GameTest do
     games = %{
       ad_lib: Game.new(),
       random: Game.new("Random word"),
-      wibble: Game.new("Direct word", "wibble")
+      wibble: Game.new("Direct word", "wibble"),
+      a_to_z?: fn letter ->
+        <<code>> = letter
+        code in ?a..?z
+      end
     }
 
     moves = %{
       winning: [
         # guess, state, left, revealed letters, used
-        {"w", :good_guess, 7, ~w(w _ _ _ _ _)s, ~w(w)},
-        {"i", :good_guess, 7, ~w(w i _ _ _ _)s, ~w(w i)},
-        {"b", :good_guess, 7, ~w(w i b b _ _)s, ~w(w i b)},
-        {"l", :good_guess, 7, ~w(w i b b l _)s, ~w(w i b l)},
-        {"z", :bad_guess, 06, ~w(w i b b l _)s, ~w(w i b l z)},
-        {"e", :won, 0x000006, ~w(w i b b l e)s, ~w(w i b l e z)}
+        {"w", :good_guess, 7, ~W(w _ _ _ _ _)s, ~W(w)},
+        {"i", :good_guess, 7, ~W(w i _ _ _ _)s, ~W(w i)},
+        {"b", :good_guess, 7, ~W(w i b b _ _)s, ~W(w i b)},
+        {"l", :good_guess, 7, ~W(w i b b l _)s, ~W(w i b l)},
+        {"z", :bad_guess, 06, ~W(w i b b l _)s, ~W(w i b l z)},
+        {"e", :won, 0x000006, ~W(w i b b l e)s, ~W(w i b l e z)}
       ],
       losing: [
         # guess, state, left, revealed letters, used
-        {"m", :bad_guess, 6, ~w(_ _ _ _ _ _)s, ~w(m)},
-        {"n", :bad_guess, 5, ~w(_ _ _ _ _ _)s, ~w(m n)},
-        {"o", :bad_guess, 4, ~w(_ _ _ _ _ _)s, ~w(m n o)},
-        {"p", :bad_guess, 3, ~w(_ _ _ _ _ _)s, ~w(m n o p)},
-        {"q", :bad_guess, 2, ~w(_ _ _ _ _ _)s, ~w(m n o p q)},
-        {"r", :bad_guess, 1, ~w(_ _ _ _ _ _)s, ~w(m n o p q r)},
-        {"s", :lost, 0x0000, ~w(w i b b l e)c, ~w(m n o p q r s)}
+        {"m", :bad_guess, 6, ~W(_ _ _ _ _ _)s, ~W(m)},
+        {"n", :bad_guess, 5, ~W(_ _ _ _ _ _)s, ~W(m n)},
+        {"o", :bad_guess, 4, ~W(_ _ _ _ _ _)s, ~W(m n o)},
+        {"p", :bad_guess, 3, ~W(_ _ _ _ _ _)s, ~W(m n o p)},
+        {"q", :bad_guess, 2, ~W(_ _ _ _ _ _)s, ~W(m n o p q)},
+        {"r", :bad_guess, 1, ~W(_ _ _ _ _ _)s, ~W(m n o p q r)},
+        {"s", :lost, 0x0000, ~W(w i b b l e)c, ~W(m n o p q r s)}
       ],
       tester: fn moves, game ->
         Enum.reduce(moves, game, fn {guess, state, left, letters, used}, game ->
@@ -49,29 +53,31 @@ defmodule Hangman.GameTest do
 
   describe "Game.new/0" do
     test "returns a struct", %{games: games} do
-      assert games.ad_lib.turns_left == 7
       assert games.ad_lib.game_state == :initializing
+      assert games.ad_lib.turns_left == 7
       assert length(games.ad_lib.letters) > 0
       assert Enum.all?(games.ad_lib.letters, &(&1 =~ ~r/[a-z]/))
+      assert Enum.all?(games.random.letters, games.a_to_z?)
       assert is_struct(games.ad_lib, Game)
     end
   end
 
   describe "Game.new/1" do
     test "returns a struct", %{games: games} do
-      assert games.random.turns_left == 7
       assert games.random.game_state == :initializing
+      assert games.random.turns_left == 7
       assert length(games.random.letters) > 0
       assert Enum.all?(games.random.letters, &(&1 =~ ~r/[a-z]/))
+      assert Enum.all?(games.random.letters, games.a_to_z?)
       assert is_struct(games.random, Game)
     end
   end
 
   describe "Game.new/2" do
     test "returns a struct", %{games: games} do
-      assert games.wibble.turns_left == 7
       assert games.wibble.game_state == :initializing
-      assert games.wibble.letters == ~w[w i b b l e]
+      assert games.wibble.turns_left == 7
+      assert games.wibble.letters == ~W[w i b b l e]
       assert is_struct(games.wibble, Game)
     end
   end
