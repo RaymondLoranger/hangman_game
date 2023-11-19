@@ -146,7 +146,8 @@ defmodule Hangman.Game do
   @spec reveal_guessed_letters(state, [letter], used) ::
           [letter | underline | charlist]
   defp reveal_guessed_letters(:lost = _game_state, letters, used),
-    do: letters |> Enum.map(&if MapSet.member?(used, &1), do: &1, else: '#{&1}')
+    do:
+      letters |> Enum.map(&if MapSet.member?(used, &1), do: &1, else: ~c"#{&1}")
 
   defp reveal_guessed_letters(_game_state, letters, used),
     do: letters |> Enum.map(&if MapSet.member?(used, &1), do: &1, else: "_")

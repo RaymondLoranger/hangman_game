@@ -4,7 +4,7 @@ defmodule Hangman.Game.MixProject do
   def project do
     [
       app: :hangman_game,
-      version: "0.1.22",
+      version: "0.1.23",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       name: "Hangman Game",
@@ -37,7 +37,7 @@ defmodule Hangman.Game.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:crypto, :logger]
+      extra_applications: [:crypto, :logger, :observer, :wx, :runtime_tools]
     ]
   end
 
