@@ -16,6 +16,9 @@ defmodule Hangman.GameTest do
       end
     }
 
+    # [["w"],["i"],["b"],["b"],["l"],["e"]]
+    word_not_guessed = ~W(w i b b l e) |> Enum.map(&[&1])
+
     moves = %{
       winning: [
         # guess, state, left, revealed letters, used
@@ -34,7 +37,7 @@ defmodule Hangman.GameTest do
         {"p", :bad_guess, 3, ~W(_ _ _ _ _ _)s, ~W(m n o p)},
         {"q", :bad_guess, 2, ~W(_ _ _ _ _ _)s, ~W(m n o p q)},
         {"r", :bad_guess, 1, ~W(_ _ _ _ _ _)s, ~W(m n o p q r)},
-        {"s", :lost, 0x0000, ~W(w i b b l e)c, ~W(m n o p q r s)}
+        {"s", :lost, 0x0000, word_not_guessed, ~W(m n o p q r s)}
       ],
       tester: fn moves, game ->
         Enum.reduce(moves, game, fn {guess, state, left, letters, used}, game ->

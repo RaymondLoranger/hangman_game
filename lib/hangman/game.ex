@@ -42,7 +42,7 @@ defmodule Hangman.Game do
   @type tally :: %{
           game_state: state,
           turns_left: turns_left,
-          letters: [letter | underline | charlist],
+          letters: [letter | underline | [letter]],
           guesses: [letter]
         }
   @typedoc "Turns left from 7 to 0"
@@ -144,10 +144,9 @@ defmodule Hangman.Game do
   ## Private functions
 
   @spec reveal_guessed_letters(state, [letter], used) ::
-          [letter | underline | charlist]
+          [letter | underline | [letter]]
   defp reveal_guessed_letters(:lost = _game_state, letters, used),
-    do:
-      letters |> Enum.map(&if MapSet.member?(used, &1), do: &1, else: ~c"#{&1}")
+    do: letters |> Enum.map(&if MapSet.member?(used, &1), do: &1, else: [&1])
 
   defp reveal_guessed_letters(_game_state, letters, used),
     do: letters |> Enum.map(&if MapSet.member?(used, &1), do: &1, else: "_")
