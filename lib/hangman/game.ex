@@ -90,6 +90,12 @@ defmodule Hangman.Game do
       iex>   length in 4..10
       iex> end
       [true]
+
+      iex> alias Hangman.Game
+      iex> for _ <- 0..99, uniq: true do
+      iex>   Game.random_name() =~ ~r/^[a-zA-Z0-9_-]{4,10}$/
+      iex> end
+      [true]
   """
   @spec random_name :: name
   def random_name do

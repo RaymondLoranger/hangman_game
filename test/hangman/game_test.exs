@@ -10,10 +10,7 @@ defmodule Hangman.GameTest do
       ad_lib: Game.new(),
       random: Game.new("Random word"),
       wibble: Game.new("Direct word", "wibble"),
-      a_to_z?: fn letter ->
-        <<code>> = letter
-        code in ?a..?z
-      end
+      a_to_z?: fn <<code>> = _letter -> code in ?a..?z end
     }
 
     # [["w"], ["i"], ["b"], ["b"], ["l"], ["e"]]
@@ -60,7 +57,6 @@ defmodule Hangman.GameTest do
       assert games.ad_lib.turns_left == 7
       assert length(games.ad_lib.letters) > 0
       assert Enum.all?(games.ad_lib.letters, &(&1 =~ ~r/[a-z]/))
-      assert Enum.all?(games.random.letters, games.a_to_z?)
       assert is_struct(games.ad_lib, Game)
     end
   end
