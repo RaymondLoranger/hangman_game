@@ -17,27 +17,27 @@ defmodule Hangman.GameTest do
     }
 
     # [["w"],["i"],["b"],["b"],["l"],["e"]]
-    word_not_guessed = ~W(w i b b l e) |> Enum.map(&[&1])
+    letters_missed! = ~W(w i b b l e) |> Enum.map(&[&1])
 
     moves = %{
       winning: [
         # guess, state, left, revealed letters, used
-        {"w", :good_guess, 7, ~W(w _ _ _ _ _)s, ~W(w)},
-        {"i", :good_guess, 7, ~W(w i _ _ _ _)s, ~W(w i)},
-        {"b", :good_guess, 7, ~W(w i b b _ _)s, ~W(w i b)},
-        {"l", :good_guess, 7, ~W(w i b b l _)s, ~W(w i b l)},
-        {"z", :bad_guess, 06, ~W(w i b b l _)s, ~W(w i b l z)},
-        {"e", :won, 0x000006, ~W(w i b b l e)s, ~W(w i b l e z)}
+        {"w", :good_guess, 7, ~W(w _ _ _ _ _), ~W(w)},
+        {"i", :good_guess, 7, ~W(w i _ _ _ _), ~W(w i)},
+        {"b", :good_guess, 7, ~W(w i b b _ _), ~W(w i b)},
+        {"l", :good_guess, 7, ~W(w i b b l _), ~W(w i b l)},
+        {"z", :bad_guess, 06, ~W(w i b b l _), ~W(w i b l z)},
+        {"e", :won, 0x000006, ~W(w i b b l e), ~W(w i b l e z)}
       ],
       losing: [
         # guess, state, left, revealed letters, used
-        {"m", :bad_guess, 6, ~W(_ _ _ _ _ _)s, ~W(m)},
-        {"n", :bad_guess, 5, ~W(_ _ _ _ _ _)s, ~W(m n)},
-        {"o", :bad_guess, 4, ~W(_ _ _ _ _ _)s, ~W(m n o)},
-        {"p", :bad_guess, 3, ~W(_ _ _ _ _ _)s, ~W(m n o p)},
-        {"q", :bad_guess, 2, ~W(_ _ _ _ _ _)s, ~W(m n o p q)},
-        {"r", :bad_guess, 1, ~W(_ _ _ _ _ _)s, ~W(m n o p q r)},
-        {"s", :lost, 0x0000, word_not_guessed, ~W(m n o p q r s)}
+        {"m", :bad_guess, 6, ~W(_ _ _ _ _ _), ~W(m)},
+        {"n", :bad_guess, 5, ~W(_ _ _ _ _ _), ~W(m n)},
+        {"o", :bad_guess, 4, ~W(_ _ _ _ _ _), ~W(m n o)},
+        {"p", :bad_guess, 3, ~W(_ _ _ _ _ _), ~W(m n o p)},
+        {"q", :bad_guess, 2, ~W(_ _ _ _ _ _), ~W(m n o p q)},
+        {"r", :bad_guess, 1, ~W(_ _ _ _ _ _), ~W(m n o p q r)},
+        {"s", :lost, 0x0000, letters_missed!, ~W(m n o p q r s)}
       ],
       tester: fn moves, game ->
         Enum.reduce(moves, game, fn {guess, state, left, letters, used}, game ->
