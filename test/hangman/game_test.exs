@@ -16,7 +16,7 @@ defmodule Hangman.GameTest do
       end
     }
 
-    # [["w"],["i"],["b"],["b"],["l"],["e"]]
+    # [["w"], ["i"], ["b"], ["b"], ["l"], ["e"]]
     letters_missed! = ~W(w i b b l e) |> Enum.map(&[&1])
 
     moves = %{
