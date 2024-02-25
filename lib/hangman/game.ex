@@ -18,8 +18,8 @@ defmodule Hangman.Game do
             letters: [],
             used: MapSet.new()
 
-  @typedoc "Letter from `a` to `z`"
-  @type letter :: String.codepoint()
+  @typedoc "Letter from `a` to `z` (one byte)"
+  @type letter :: byte
   @typedoc "Game name"
   @type name :: String.t()
   @typedoc "Game state"
@@ -48,7 +48,7 @@ defmodule Hangman.Game do
   @typedoc "Turns left from 7 to 0"
   @type turns_left :: 0..7
   @typedoc "Underline: `_`"
-  @type underline :: String.codepoint()
+  @type underline :: byte
   @typedoc "A set of used (guessed) letters"
   @type used :: MapSet.t(letter)
 
