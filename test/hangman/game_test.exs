@@ -10,7 +10,7 @@ defmodule Hangman.GameTest do
       ad_lib: Game.new(),
       random: Game.new("Random word"),
       wibble: Game.new("Direct word", "wibble"),
-      a_to_z?: fn <<code>> = _letter -> code in ?a..?z end
+      a_to_z?: fn <<byte>> = _letter -> byte in ?a..?z end
     }
 
     # [["w"], ["i"], ["b"], ["b"], ["l"], ["e"]]

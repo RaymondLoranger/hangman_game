@@ -19,7 +19,7 @@ defmodule Hangman.Game do
             used: MapSet.new()
 
   @typedoc "Letter from `a` to `z`"
-  @type letter :: String.codepoint()
+  @type letter :: <<_::8>>
   @typedoc "Game name"
   @type name :: String.t()
   @typedoc "Game state"
@@ -48,7 +48,7 @@ defmodule Hangman.Game do
   @typedoc "Turns left from 7 to 0"
   @type turns_left :: 0..7
   @typedoc "Underline: `_`"
-  @type underline :: String.codepoint()
+  @type underline :: <<_::8>>
   @typedoc "A set of used (guessed) letters"
   @type used :: MapSet.t(letter)
 
@@ -121,8 +121,7 @@ defmodule Hangman.Game do
   def make_move(%Game{game_state: state} = game, _) when state in [:won, :lost],
     do: game
 
-  # Guess not validated here; should be done in client interface...
-  def make_move(%Game{used: used} = game, guess),
+  def make_move(%Game{used: used} = game, <<byte>> = guess) when byte in ?a..?z,
     do: make_move(game, guess, MapSet.member?(used, guess))
 
   @doc """
