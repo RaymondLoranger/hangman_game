@@ -67,13 +67,13 @@ defmodule Hangman.Game do
 
       iex> alias Hangman.Game
       iex> game = Game.new("Mr Smith")
-      iex> {game.game_state, game.turns_left, game.game_name}
-      {:initializing, 7, "Mr Smith"}
+      iex> {game.game_state, game.turns_left, game.game_name, game.used}
+      {:initializing, 7, "Mr Smith", MapSet.new([])}
 
       iex> alias Hangman.Game
       iex> game = Game.new("Wibble", "wibble")
-      iex> {game.game_state, game.turns_left, game.game_name, game.letters}
-      {:initializing, 7, "Wibble", ~W[w i b b l e]}
+      iex> {game.turns_left, game.game_name, game.letters, game.used}
+      {7, "Wibble", ~W[w i b b l e], MapSet.new([])}
   """
   @spec new(name, String.t()) :: t
   def new(game_name \\ random_name(), word \\ Hangman.Dictionary.random_word()),
