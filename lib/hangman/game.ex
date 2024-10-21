@@ -3,8 +3,8 @@ defmodule Hangman.Game do
   A game struct and functions for the _Hangman Game_.
 
   The game struct contains the fields `game_name`, `game_state`, `turns_left`,
-  `letters` and `used` representing the characteristics of a game in the
-  _Hangman Game_.
+  `letters` and `used` representing the properties of a game in the _Hangman
+  Game_.
 
   ##### Based on the course [Elixir for Programmers](https://codestool.coding-gnome.com/courses/elixir-for-programmers) by Dave Thomas.
   """
@@ -150,7 +150,7 @@ defmodule Hangman.Game do
 
   @spec reveal_guessed_letters(state, [letter], used) ::
           [letter | underline | [letter]]
-  defp reveal_guessed_letters(:lost = _game_state, letters, used),
+  defp reveal_guessed_letters(_game_state = :lost, letters, used),
     do: letters |> Enum.map(&if MapSet.member?(used, &1), do: &1, else: [&1])
 
   defp reveal_guessed_letters(_game_state, letters, used),

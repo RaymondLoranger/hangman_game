@@ -7,10 +7,9 @@ defmodule Hangman.GameTest do
 
   setup_all do
     games = %{
-      ad_lib: Game.new(),
+      anonym: Game.new(),
       random: Game.new("Random word"),
-      wibble: Game.new("Direct word", "wibble"),
-      a_to_z?: fn <<byte>> = _letter -> byte in ?a..?z end
+      wibble: Game.new("Direct word", "wibble")
     }
 
     # [["w"], ["i"], ["b"], ["b"], ["l"], ["e"]]
@@ -24,7 +23,7 @@ defmodule Hangman.GameTest do
         {"b", :good_guess, 7, ~W(w i b b _ _), ~W(w i b)},
         {"l", :good_guess, 7, ~W(w i b b l _), ~W(w i b l)},
         {"z", :bad_guess, 06, ~W(w i b b l _), ~W(w i b l z)},
-        {"e", :won, 0x000006, ~W(w i b b l e), ~W(w i b l e z)}
+        {"e", :won, 0x000006, ~W(w i b b l e), ~W(w i b l z e)}
       ],
       losing: [
         # guess, state, left, revealed letters, used
@@ -41,8 +40,9 @@ defmodule Hangman.GameTest do
           game = Game.make_move(game, guess)
           assert game.game_state == state
           assert game.turns_left == left
-          assert game.used == MapSet.new(used)
           assert Game.tally(game).letters == letters
+          assert game.used == MapSet.new(used)
+          assert MapSet.equal?(game.used, MapSet.new(used))
           game
         end)
       end
@@ -53,11 +53,12 @@ defmodule Hangman.GameTest do
 
   describe "Game.new/0" do
     test "returns a struct", %{games: games} do
-      assert games.ad_lib.game_state == :initializing
-      assert games.ad_lib.turns_left == 7
-      assert length(games.ad_lib.letters) > 0
-      assert Enum.all?(games.ad_lib.letters, &(&1 =~ ~r/[a-z]/))
-      assert is_struct(games.ad_lib, Game)
+      assert games.anonym.game_state == :initializing
+      assert games.anonym.turns_left == 7
+      assert length(games.anonym.letters) > 0
+      assert Enum.all?(games.anonym.letters, &(&1 =~ ~r/[a-z]/))
+      assert Enum.all?(games.random.letters, fn <<byte>> -> byte in ?a..?z end)
+      assert is_struct(games.anonym, Game)
     end
   end
 
@@ -67,7 +68,7 @@ defmodule Hangman.GameTest do
       assert games.random.turns_left == 7
       assert length(games.random.letters) > 0
       assert Enum.all?(games.random.letters, &(&1 =~ ~r/[a-z]/))
-      assert Enum.all?(games.random.letters, games.a_to_z?)
+      assert Enum.all?(games.random.letters, fn <<byte>> -> byte in ?a..?z end)
       assert is_struct(games.random, Game)
     end
   end

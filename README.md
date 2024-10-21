@@ -6,8 +6,7 @@ A game struct and functions for the _Hangman Game_.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `hangman_game` to your list of dependencies in `mix.exs`:
+Add `hangman_game` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -16,8 +15,3 @@ def deps do
   ]
 end
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/hangman_game](https://hexdocs.pm/hangman_game).
-
