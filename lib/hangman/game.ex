@@ -11,6 +11,8 @@ defmodule Hangman.Game do
 
   alias __MODULE__
 
+  @words ~W[smithereens splintered shattered deliquescent flabbergast]
+
   @enforce_keys [:game_name, :letters]
   defstruct game_name: "",
             game_state: :initializing,
@@ -55,7 +57,7 @@ defmodule Hangman.Game do
   @doc """
   Creates a game struct from a `game_name` and a `word` to be guessed. The
   default value for `game_name` is provided by function `random_name/0` and for
-  `word` by function `Hangman.Dictionary.random_word/0`.
+  `word` by function `random_word/0`.
 
   ## Examples
 
@@ -76,7 +78,7 @@ defmodule Hangman.Game do
       {7, "Wibble", ~W[w i b b l e], MapSet.new([])}
   """
   @spec new(name, String.t()) :: t
-  def new(game_name \\ random_name(), word \\ Hangman.Dictionary.random_word()),
+  def new(game_name \\ random_name(), word \\ random_word()),
     do: %Game{game_name: game_name, letters: String.codepoints(word)}
 
   @doc """
@@ -196,4 +198,7 @@ defmodule Hangman.Game do
 
   defp score_guess(%Game{turns_left: turns_left} = game, _good_guess?),
     do: %Game{game | game_state: :bad_guess, turns_left: turns_left - 1}
+
+  @spec random_word :: String.t()
+  defp random_word, do: Enum.random(@words)
 end
