@@ -132,9 +132,10 @@ defmodule Hangman.Game do
       iex> alias Hangman.Game
       iex> game = Game.random_name() |> Game.new("anaconda")
       iex> game = Game.make_move(game, "a")
+      iex> game = Game.make_move(game, "n")
       iex> tally = Game.tally(game)
       iex> {tally.game_state, tally.turns_left, tally.letters, tally.guesses}
-      {:good_guess, 7, ~W[a _ a _ _ _ _ a], ~W[a]}
+      {:good_guess, 7, ~W[a n a _ _ n _ a], ~W[a n]}
   """
   @spec tally(t) :: tally
   def tally(%Game{game_state: game_state, turns_left: turns_left} = game) do
@@ -145,6 +146,23 @@ defmodule Hangman.Game do
       guesses: MapSet.to_list(game.used)
     }
   end
+
+  @doc """
+  Resigns `game`.
+
+  ## Examples
+
+      iex> alias Hangman.Game
+      iex> game = Game.random_name() |> Game.new("anaconda")
+      iex> game = Game.make_move(game, "a")
+      iex> game = Game.make_move(game, "n")
+      iex> lost_game = Game.resign(game)
+      iex> tally = Game.tally(lost_game)
+      iex> {tally.game_state, tally.turns_left, tally.letters, tally.guesses}
+      {:lost, 7, ["a", "n", "a", ["c"], ["o"], "n", ["d"], "a"], ~W[a n]}
+  """
+  @spec resign(t) :: t
+  def resign(game), do: put_in(game.game_state, :lost)
 
   ## Private functions
 
