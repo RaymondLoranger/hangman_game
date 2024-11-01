@@ -78,8 +78,9 @@ defmodule Hangman.Game do
       {7, "Wibble", ~W[w i b b l e], MapSet.new([])}
   """
   @spec new(name, String.t()) :: t
-  def new(game_name \\ random_name(), word \\ random_word()),
-    do: %Game{game_name: game_name, letters: String.codepoints(word)}
+  def new(game_name \\ random_name(), word \\ random_word())
+      when is_binary(game_name) and is_binary(word),
+      do: %Game{game_name: game_name, letters: String.codepoints(word)}
 
   @doc """
   Returns a random name of 4 to 10 characters.
@@ -164,7 +165,7 @@ defmodule Hangman.Game do
       {:lost, 7, ["a", "n", "a", ["c"], ["o"], "n", ["d"], "a"], ~W[a n]}
   """
   @spec resign(t) :: t
-  def resign(game), do: put_in(game.game_state, :lost)
+  def resign(%Game{} = game), do: put_in(game.game_state, :lost)
 
   ## Private functions
 
