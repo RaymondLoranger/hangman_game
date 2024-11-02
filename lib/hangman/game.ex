@@ -57,11 +57,7 @@ defmodule Hangman.Game do
   @doc """
   Creates a game struct from a `game_name` and a `word` to be guessed. The
   default value for `game_name` is provided by function `random_name/0` and for
-  `word` by function `random_word/0`.
-
-  Using function `Hangman.Dictionary.random_word/0` for the default word would
-  cause app `:hangman_dictionary` to run on each client node as opposed to only
-  on the engine node (see function `Hangman.Engine.GameServer.init/1`).
+  `word` by private function `random_word/0`.
 
   ## Examples
 
