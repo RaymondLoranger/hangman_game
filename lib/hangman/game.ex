@@ -11,8 +11,6 @@ defmodule Hangman.Game do
 
   alias __MODULE__
 
-  @words ~W[smithereens splintered shattered deliquescent flabbergast]
-
   @enforce_keys [:game_name, :letters]
   defstruct game_name: "",
             game_state: :initializing,
@@ -55,32 +53,28 @@ defmodule Hangman.Game do
   @type used :: MapSet.t(letter)
 
   @doc """
-  Creates a game struct from a `game_name` and a `word` to be guessed. The
-  default value for `game_name` is provided by function `random_name/0` and for
-  `word` by private function `random_word/0`.
+  Creates a game struct from a `word` to be guessed.
 
   ## Examples
 
       iex> alias Hangman.Game
-      iex> game = Game.new()
-      iex> game_name_length = String.length(game.game_name)
-      iex> {game.game_state, game.turns_left, game_name_length in 4..10}
-      {:initializing, 7, true}
+      iex> game = Game.new("wibble")
+      iex> {game.game_state, game.turns_left, game.letters, game.used}
+      {:initializing, 7, ~W[w i b b l e], MapSet.new([])}
 
       iex> alias Hangman.Game
-      iex> game = Game.new("Mr Smith")
-      iex> {game.game_state, game.turns_left, game.game_name, game.used}
-      {:initializing, 7, "Mr Smith", MapSet.new([])}
-
-      iex> alias Hangman.Game
-      iex> game = Game.new("Wibble", "wibble")
-      iex> {game.turns_left, game.game_name, game.letters, game.used}
-      {7, "Wibble", ~W[w i b b l e], MapSet.new([])}
+      iex> Game.new("José")
+      ** (ArgumentError) some characters of 'José' not a-z
   """
-  @spec new(name, String.t()) :: t
-  def new(game_name \\ random_name(), word \\ random_word())
-      when is_binary(game_name) and is_binary(word),
-      do: %Game{game_name: game_name, letters: String.codepoints(word)}
+  @spec new(String.t()) :: t
+  def new(word) when is_binary(word) do
+    letters = String.codepoints(word)
+
+    case Enum.all?(letters, fn <<byte>> -> byte in ?a..?z end) do
+      true -> %Game{game_name: random_name(), letters: letters}
+      false -> raise ArgumentError, "some characters of '#{word}' not a-z"
+    end
+  end
 
   @doc """
   Returns a random name of 4 to 10 characters.
@@ -116,9 +110,9 @@ defmodule Hangman.Game do
   ## Examples
 
       iex> alias Hangman.Game
-      iex> game = Game.new()
-      iex> Game.make_move(game, "a").game_state in [:good_guess, :bad_guess]
-      true
+      iex> game = Game.new("wibble")
+      iex> Game.make_move(game, "a").game_state
+      :bad_guess
   """
   @spec make_move(t, guess :: letter) :: t
   def make_move(%Game{game_state: state} = game, _) when state in [:won, :lost],
@@ -133,7 +127,7 @@ defmodule Hangman.Game do
   ## Examples
 
       iex> alias Hangman.Game
-      iex> game = Game.random_name() |> Game.new("anaconda")
+      iex> game = Game.new("anaconda")
       iex> game = Game.make_move(game, "a")
       iex> game = Game.make_move(game, "n")
       iex> tally = Game.tally(game)
@@ -156,7 +150,7 @@ defmodule Hangman.Game do
   ## Examples
 
       iex> alias Hangman.Game
-      iex> game = Game.random_name() |> Game.new("anaconda")
+      iex> game = Game.new("anaconda")
       iex> game = Game.make_move(game, "a")
       iex> game = Game.make_move(game, "n")
       iex> lost_game = Game.resign(game)
@@ -199,7 +193,4 @@ defmodule Hangman.Game do
 
   defp score_guess(%Game{turns_left: turns_left} = game, _good_guess?),
     do: %Game{game | game_state: :bad_guess, turns_left: turns_left - 1}
-
-  @spec random_word :: String.t()
-  defp random_word, do: Enum.random(@words)
 end
