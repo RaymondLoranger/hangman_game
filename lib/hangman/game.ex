@@ -53,25 +53,26 @@ defmodule Hangman.Game do
   @type used :: MapSet.t(letter)
 
   @doc """
-  Creates a game struct from a `word` to be guessed.
+  Creates a game struct from a `word` to be guessed and a `game_name`.
+  The default value for `game_name` is provided by function `random_name/0`.
 
   ## Examples
 
       iex> alias Hangman.Game
-      iex> game = Game.new("wibble")
-      iex> {game.game_state, game.turns_left, game.letters, game.used}
-      {:initializing, 7, ~W[w i b b l e], MapSet.new([])}
+      iex> %Game{game_name: name} = game = Game.new("wibble", "Wibble")
+      iex> {name, game.game_state, game.turns_left, game.letters, game.used}
+      {"Wibble", :initializing, 7, ~W[w i b b l e], MapSet.new([])}
 
       iex> alias Hangman.Game
       iex> Game.new("José")
       ** (ArgumentError) some characters of 'José' not a-z
   """
-  @spec new(String.t()) :: t
-  def new(word) when is_binary(word) do
+  @spec new(String.t(), name) :: t
+  def new(word, game_name \\ random_name()) when is_binary(word) do
     letters = String.codepoints(word)
 
     case Enum.all?(letters, fn <<byte>> -> byte in ?a..?z end) do
-      true -> %Game{game_name: random_name(), letters: letters}
+      true -> %Game{game_name: game_name, letters: letters}
       false -> raise ArgumentError, "some characters of '#{word}' not a-z"
     end
   end
