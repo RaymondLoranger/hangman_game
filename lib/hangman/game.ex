@@ -54,6 +54,8 @@ defmodule Hangman.Game do
   @type underline :: <<_::8>>
   @typedoc "A set of used (guessed) letters"
   @type used :: MapSet.t(letter)
+  @typedoc "A word with letters from `a` to `z`"
+  @type word :: String.t()
 
   @doc """
   Creates a game struct from a `word` to be guessed and a `game_name`.
@@ -75,7 +77,7 @@ defmodule Hangman.Game do
       iex> Game.new("José")
       ** (ArgumentError) some characters of 'José' not a-z
   """
-  @spec new(String.t(), name) :: t
+  @spec new(word, name) :: t
   def new(word, game_name \\ random_name()) when is_binary(word) do
     letters = String.codepoints(word)
 
