@@ -122,6 +122,11 @@ defmodule Hangman.Game do
       iex> game = Game.new("wibble")
       iex> Game.make_move(game, "a").game_state
       :bad_guess
+
+      iex> alias Hangman.Game
+      iex> game = Game.new("wibble")
+      iex> Game.make_move(game, "B")
+      ** (ArgumentError) guess 'B' not a-z
   """
   @spec make_move(t, guess :: letter) :: t
   def make_move(%Game{game_state: state} = game, _) when state in [:won, :lost],
@@ -129,6 +134,9 @@ defmodule Hangman.Game do
 
   def make_move(%Game{used: used} = game, <<byte>> = guess) when byte in ?a..?z,
     do: make_move(game, guess, MapSet.member?(used, guess))
+
+  def make_move(_game, guess),
+    do: raise(ArgumentError, "guess '#{guess}' not a-z")
 
   @doc """
   Returns a tally map externalizing `game`.
