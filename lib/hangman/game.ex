@@ -1,3 +1,6 @@
+# ┌──────────────────────────────────────────────────────────────┐
+# │ Based on the course "Elixir for Programmers" by Dave Thomas. │
+# └──────────────────────────────────────────────────────────────┘
 defmodule Hangman.Game do
   @moduledoc """
   A game struct and functions for the _Hangman Game_.
