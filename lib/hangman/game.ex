@@ -47,7 +47,7 @@ defmodule Hangman.Game do
           letters: [letter],
           used: used
         }
-  @typedoc "A tally map for the Hangman Game"
+  @typedoc "A tally map externalizing a Hangman Game"
   @type tally :: %{
           game_state: state,
           turns_left: turns_left,
@@ -63,16 +63,20 @@ defmodule Hangman.Game do
   @typedoc "A word with letters from `a` to `z`"
   @type word :: String.t()
 
+  defguard is_valid(string) when is_binary(string) and byte_size(string) > 0
+
   @doc """
   Creates a game struct from a `word` to be guessed and a `game_name`.
   The default value for `game_name` is provided by function `random_name/0`.
 
-  Using function `Hangman.Dictionary.random_word/0` of app `:hangman_dictionary`
-  to provide the default value for `word` would cause app `:hangman_dictionary`
-  to run on each client node as opposed to only on the engine node (see function
-  `Hangman.Engine.GameServer.init/1` of app [:hangman_engine][he]).
+  Using function [`Hangman.Dictionary.random_word/0`][rw] of app
+  `:hangman_dictionary` to provide the default value for `word` would cause app
+  `:hangman_dictionary` to run on each client node as opposed to only on the
+  engine node (see function [`Hangman.Engine.GameServer.init/1`][in] of app
+  `:hangman_engine`.
 
-  [he]: https://hex.pm/packages/hangman_engine
+  [rw]: https://hexdocs.pm/hangman_dictionary/Hangman.Dictionary.html#random_word/0
+  [in]: https://hexdocs.pm/hangman_engine/Hangman.Engine.GameServer.html#init/0
 
   ## Examples
 
@@ -84,15 +88,26 @@ defmodule Hangman.Game do
       iex> alias Hangman.Game
       iex> Game.new("José")
       ** (ArgumentError) some characters of 'José' not a-z
+
+      iex> alias Hangman.Game
+      iex> Game.new("secret", "")
+      ** (ArgumentError) cannot create hangman game: invalid arguments
   """
+  @dialyzer {:no_opaque, [new: 2]}
   @spec new(word, name) :: t
-  def new(word, game_name \\ random_name()) when is_binary(word) do
+  def new(word, game_name \\ random_name())
+
+  def new(word, game_name) when is_valid(word) and is_valid(game_name) do
     letters = String.codepoints(word)
 
     case Enum.all?(letters, fn <<byte>> -> byte in ?a..?z end) do
       true -> %Game{game_name: game_name, letters: letters}
       false -> raise ArgumentError, "some characters of '#{word}' not a-z"
     end
+  end
+
+  def new(_word, _game_name) do
+    raise ArgumentError, "cannot create hangman game: invalid arguments"
   end
 
   @doc """
@@ -134,9 +149,21 @@ defmodule Hangman.Game do
       :bad_guess
 
       iex> alias Hangman.Game
+      iex> import Game, only: [is_valid: 1]
+      iex> %Game{game_name: name} = game = Game.new("what")
+      iex> %Game{game_state: :good_guess} = game = Game.make_move(game, "a")
+      iex> {is_valid(name), game.turns_left, game.letters, game.used}
+      {true, 7, ["w", "h", "a", "t"], MapSet.new(["a"])}
+
+      iex> alias Hangman.Game
       iex> game = Game.new("wibble")
       iex> Game.make_move(game, "B")
       ** (ArgumentError) guess 'B' not a-z
+
+      iex> alias Hangman.Game
+      iex> game = Game.new("wibble")
+      iex> Game.make_move(game, "bb")
+      ** (ArgumentError) guess 'bb' not a-z
   """
   @spec make_move(t, guess :: letter) :: t
   def make_move(%Game{game_state: state} = game, _) when state in [:won, :lost],

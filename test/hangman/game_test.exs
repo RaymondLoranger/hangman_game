@@ -48,7 +48,7 @@ defmodule Hangman.GameTest do
   end
 
   describe "Game.new/1" do
-    test "returns a struct", %{game: wibble} do
+    test "returns a struct", %{game: %Game{} = wibble} do
       assert wibble.game_state == :initializing
       assert wibble.turns_left == 7
       assert wibble.letters == ~W(w i b b l e)
@@ -57,32 +57,32 @@ defmodule Hangman.GameTest do
   end
 
   describe "Game.make_move/2" do
-    test "game static once won or lost", %{game: wibble} do
+    test "game static once won or lost", %{game: %Game{} = wibble} do
       for state <- [:won, :lost] do
         game = %Game{wibble | game_state: state}
         assert ^game = Game.make_move(game, "x")
       end
     end
 
-    test "first guess of a letter: not already used", %{game: wibble} do
+    test "first guess of letter: not already used", %{game: %Game{} = wibble} do
       game = Game.make_move(wibble, "x")
       refute game.game_state == :already_used
     end
 
-    test "second guess of a letter: already used", %{game: wibble} do
+    test "second guess of letter: already used", %{game: %Game{} = wibble} do
       game = Game.make_move(wibble, "x")
       refute game.game_state == :already_used
       game = Game.make_move(game, "x")
       assert game.game_state == :already_used
     end
 
-    test "a good guess is recognized", %{game: wibble} do
+    test "a good guess is recognized", %{game: %Game{} = wibble} do
       game = Game.make_move(wibble, "w")
       assert game.game_state == :good_guess
       assert game.turns_left == 7
     end
 
-    test "a bad guess is recognized", %{game: wibble} do
+    test "a bad guess is recognized", %{game: %Game{} = wibble} do
       game = Game.make_move(wibble, "x")
       assert game.game_state == :bad_guess
       assert game.turns_left == 6
